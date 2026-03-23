@@ -82,12 +82,19 @@ print("\n=== Portfolio Analysis + Allocation ===\n")
 allocations = []
 alerts = []
 new_signals = []
+total_portfolio_value = 0 
 
 for index, row in portfolio.iterrows():
     symbol = row["symbol"]
+    shares = row["shares"]
 
     ticker = yf.Ticker(symbol)
     data = ticker.history(period="3mo")
+    price = ticker.history(period="1d")["Close"].iloc[-1]
+
+    value = shares * price
+    total_portfolio_value += value
+
 
     # Indicators
     data["RSI"] = ta.momentum.RSIIndicator(data["Close"]).rsi()
@@ -138,6 +145,22 @@ for index, row in portfolio.iterrows():
         score -= 1
 
     allocations.append((symbol, score))
+
+# Save to portfolio_value.csv
+portfolio_value_row = pd.DataFrame([{
+    "date": datetime.now().strftime("%Y-%m-%d"),
+    "portfolio_value": total_portfolio_value
+}])
+
+try:
+    existing = pd.read_csv("portfolio_value.csv")
+    portfolio_value_row = pd.concat([existing, portfolio_value_row], ignore_index=True)
+except:
+    pass
+
+portfolio_value_row.to_csv("portfolio_value.csv", index=False)
+print("\n✅ Portfolio Value saved to portfolio_value.csv")
+print(total_portfolio_value)
 
 # Normalize scores
 total_score = sum(max(s, 0) for _, s in allocations)
