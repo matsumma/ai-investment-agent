@@ -1,34 +1,20 @@
 # dashboard.py
 
-
 import streamlit as st
 import pandas as pd
 import yfinance as yf
 import matplotlib.pyplot as plt
-import time
-from datetime import datetime
 
-st.set_page_config(page_title="AI Investment Agent", layout="centered")
+st.set_page_config(page_title="AI Investment Agent", layout="wide")
 
 st.title("📊 AI Investment Agent Dashboard")
 
-# Manual refresh
-if st.button("🔄 Refresh Now"):
-    st.rerun()
-
-# Timestamp
-st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 # Load data
 try:
     history = pd.read_csv("history.csv")
 except:
     history = pd.DataFrame()
 
-# Create latest snapshot
-if not history.empty:
-    latest = history.sort_values("date").drop_duplicates("symbol", keep="last")
-else:
-    latest = pd.DataFrame()
 try:
     portfolio = pd.read_csv("portfolio.csv")
 except:
@@ -42,51 +28,11 @@ if not portfolio.empty:
 else:
     st.write("No portfolio data")
 
-# --- Portfolio Snapshot ---
-st.header("📊 Portfolio Snapshot")
-
-if not latest.empty:
-    total_value = latest["allocation"].sum()
-    st.metric("Total Monthly Allocation", f"${total_value:.2f}")
-
-st.header("💰 Trade Recommendations")
-
-if not history.empty:
-    latest = history.sort_values("date").drop_duplicates("symbol", keep="last")
-
-    for _, row in latest.iterrows():
-        symbol = row["symbol"]
-        allocation = row["allocation"]
-        score = row["score"]
-
-        if allocation < 20:
-            action = "SKIP"
-        elif score < 0:
-            action = f"⚠️ Cautious Buy ${allocation:.2f}"
-        else:
-            action = f"✅ Buy ${allocation:.2f}"
-
-        if score < 0:
-            st.warning(f"{symbol}: Buy ${allocation:.2f}")
-        else:
-            st.success(f"{symbol}: Buy ${allocation:.2f}")
-
 # --- Latest Signals ---
 st.header("📈 Latest Signals")
 
-if not latest.empty:
-    for _, row in latest.iterrows():
-        symbol = row["symbol"]
-        allocation = row["allocation"]
-        score = row["score"]
-
-        if allocation < 20:
-            continue
-
-        if score < 0:
-            st.warning(f"{symbol}: Buy ${allocation:.2f}")
-        else:
-            st.success(f"{symbol}: Buy ${allocation:.2f}")
+if not history.empty:
+    latest = history.sort_values("date").drop_duplicates("symbol", keep="last")
 
     for _, row in latest.iterrows():
         symbol = row["symbol"]
@@ -113,7 +59,7 @@ else:
 
 st.header("📈 Stock Charts with Signals")
 
-if not latest.empty:
+if not history.empty:
     latest = history.sort_values("date").drop_duplicates("symbol", keep="last")
 
     selected_symbol = st.selectbox(
@@ -167,11 +113,11 @@ if not latest.empty:
     st.pyplot(fig)
 
 # --- Portfolio Snapshot ---
-#st.header("📊 Portfolio Snapshot")
-#
-#if not history.empty:
-#    total_value = latest["allocation"].sum()
-#    st.metric("Total Monthly Allocation", f"${total_value:.2f}")
+st.header("📊 Portfolio Snapshot")
+
+if not history.empty:
+    total_value = latest["allocation"].sum()
+    st.metric("Total Monthly Allocation", f"${total_value:.2f}")
 
 # --- RSI Visualization ---
 st.header("📉 RSI Overview")
@@ -198,3 +144,24 @@ if not history.empty:
 st.header("🗂 Raw History Data")
 st.dataframe(history)
 
+st.header("💰 Trade Recommendations")
+
+if not history.empty:
+    latest = history.sort_values("date").drop_duplicates("symbol", keep="last")
+
+    for _, row in latest.iterrows():
+        symbol = row["symbol"]
+        allocation = row["allocation"]
+        score = row["score"]
+
+        if allocation < 20:
+            action = "SKIP"
+        elif score < 0:
+            action = f"⚠️ Cautious Buy ${allocation:.2f}"
+        else:
+            action = f"✅ Buy ${allocation:.2f}"
+
+        if score < 0:
+            st.warning(f"{symbol}: Buy ${allocation:.2f}")
+        else:
+            st.success(f"{symbol}: Buy ${allocation:.2f}")
