@@ -69,44 +69,44 @@ except:
     st.info("No portfolio data yet")
 
 # --- Portfolio Value ---
+#
+#st.header("💼 Portfolio Value")
+#
+#try:
+#    pv = pd.read_csv("portfolio_value.csv")
+#    pv["date"] = pd.to_datetime(pv["date"])
+#
+#    latest_value = pv.iloc[-1]["portfolio_value"]
+#    first_value = pv.iloc[0]["portfolio_value"]
+#
+#    # --- Short-term change ---
+#    if len(pv) > 1:
+#        previous_value = pv.iloc[-2]["portfolio_value"]
+#        change = latest_value - previous_value
+#        pct_change = (change / previous_value) * 100
+# """     else:
+#         change = 0
+#         pct_change = 0
 
-st.header("💼 Portfolio Value")
+#     # --- Total return since start ---
+#     total_return = latest_value - first_value
+#     total_pct = (total_return / first_value) * 100
 
-try:
-    pv = pd.read_csv("portfolio_value.csv")
-    pv["date"] = pd.to_datetime(pv["date"])
+#     st.metric(
+#         "Total Portfolio Value",
+#         f"${latest_value:,.2f}",
+#         delta=f"{change:,.2f} ({pct_change:.2f}%)"
+#     )
 
-    latest_value = pv.iloc[-1]["portfolio_value"]
-    first_value = pv.iloc[0]["portfolio_value"]
+#     # 🔥 NEW: Total return display
+#     st.success(f"Total Return: {total_return:,.2f} ({total_pct:.2f}%)")
 
-    # --- Short-term change ---
-    if len(pv) > 1:
-        previous_value = pv.iloc[-2]["portfolio_value"]
-        change = latest_value - previous_value
-        pct_change = (change / previous_value) * 100
-    else:
-        change = 0
-        pct_change = 0
+#     # Chart
+#     st.line_chart(pv.set_index("date")["portfolio_value"])
 
-    # --- Total return since start ---
-    total_return = latest_value - first_value
-    total_pct = (total_return / first_value) * 100
-
-    st.metric(
-        "Total Portfolio Value",
-        f"${latest_value:,.2f}",
-        delta=f"{change:,.2f} ({pct_change:.2f}%)"
-    )
-
-    # 🔥 NEW: Total return display
-    st.success(f"Total Return: {total_return:,.2f} ({total_pct:.2f}%)")
-
-    # Chart
-    st.line_chart(pv.set_index("date")["portfolio_value"])
-
-except Exception as e:
-    st.write("No portfolio value data yet")
-    st.write(e)
+# except Exception as e:
+#     st.write("No portfolio value data yet")
+#     st.write(e)
 
 # --- Trade Recommendations ---
 st.divider()
