@@ -33,10 +33,14 @@ jobs:
         run: |
           python main.py
 
-      - name: Commit and push updates
-        run: |
-          git config --global user.name "ai-agent"
-          git config --global user.email "agent@github.com"
-          git add history.csv portfolio_value.csv
-          git commit -m "auto update data" || echo "No changes to commit"
-          git push
+       - name: Commit and push updates
+         run: |
+           git config --global user.name "ai-agent"
+           git config --global user.email "agent@github.com"
+
+           git pull origin main --rebase
+
+           git add history.csv portfolio_value.csv
+           git commit -m "auto update data" || echo "No changes to commit"
+
+           git push
