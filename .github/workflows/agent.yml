@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # 🔥 REQUIRED FOR PUSH
+      contents: write
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4   # ✅ updated
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5   # ✅ updated
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
@@ -33,14 +33,14 @@ jobs:
         run: |
           python main.py
 
-       - name: Commit and push updates
-         run: |
-           git config --global user.name "ai-agent"
-           git config --global user.email "agent@github.com"
+      - name: Commit and push updates
+        run: |
+          git config --global user.name "ai-agent"
+          git config --global user.email "agent@github.com"
 
-           git pull origin main --rebase
+          git pull origin main --rebase || echo "Pull skipped"
 
-           git add history.csv portfolio_value.csv
-           git commit -m "auto update data" || echo "No changes to commit"
+          git add history.csv portfolio_value.csv
+          git commit -m "auto update data" || echo "No changes to commit"
 
-           git push
+          git push origin main
