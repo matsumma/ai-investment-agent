@@ -28,6 +28,38 @@ if not portfolio.empty:
 else:
     st.write("No portfolio data")
 
+# --- Portfolio Value ---
+
+st.header("💼 Portfolio Value")
+
+try:
+    pv = pd.read_csv("portfolio_value.csv")
+    pv["date"] = pd.to_datetime(pv["date"])
+
+    latest_value = pv.iloc[-1]["portfolio_value"]
+
+    # Calculate change
+    if len(pv) > 1:
+        previous_value = pv.iloc[-2]["portfolio_value"]
+
+        change = latest_value - previous_value
+        pct_change = (change / previous_value) * 100
+
+        st.metric(
+            "Total Portfolio Value",
+            f"${latest_value:,.2f}",
+            delta=f"{change:,.2f} ({pct_change:.2f}%)"
+        )
+    else:
+        st.metric("Total Portfolio Value", f"${latest_value:,.2f}")
+
+    # Chart
+    st.line_chart(pv.set_index("date")["portfolio_value"])
+
+except Exception as e:
+    st.write("No portfolio value data yet")
+    st.write(e)
+
 # --- Latest Signals ---
 st.header("📈 Latest Signals")
 
