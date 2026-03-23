@@ -312,5 +312,3 @@ if alerts:
     send_telegram_alert(message)
 else:
     print("No alerts today.")
-
-
